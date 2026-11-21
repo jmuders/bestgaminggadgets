@@ -53,19 +53,19 @@
     const photos=verifiedPhotos(product,category);
     const galleryId='gallery-'+index;
     if(!photos.length) {
-      return \`<div class="gallery-empty" role="img" aria-label="Verified product photographs not available for \${escapeHTML(product.name)}"><span class="gallery-empty-icon" aria-hidden="true">\${escapeHTML(category.icon)}</span><span>PRODUCT IMAGES PENDING VERIFICATION</span></div>\`;
+      return `<div class="gallery-empty" role="img" aria-label="Verified product photographs not available for ${escapeHTML(product.name)}"><span class="gallery-empty-icon" aria-hidden="true">${escapeHTML(category.icon)}</span><span>PRODUCT IMAGES PENDING VERIFICATION</span></div>`;
     }
-    return \`<div class="media-carousel" data-carousel data-index="0" aria-label="\${escapeHTML(product.name)} image gallery">
-      <div class="media-track" id="\${galleryId}" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Photos of \${escapeHTML(product.name)}">
-      \${photos.map((photo,i)=>\`<div class="media-slide" role="group" aria-roledescription="slide" aria-label="Image \${i+1} of \${photos.length}">
-        <img src="\${escapeHTML(photo.url)}" alt="\${escapeHTML(photo.alt)}" loading="\${i===0?'eager':'lazy'}" decoding="async" draggable="false">
-        \${photo.page ? \`<a class="media-credit" href="\${escapeHTML(photo.page)}" target="_blank" rel="noopener noreferrer" aria-label="Photo credit and license details">\${escapeHTML(photo.author)} · \${escapeHTML(photo.license)} ↗</a>\` : ''}
-      </div>\`).join('')}
+    return `<div class="media-carousel" data-carousel data-index="0" aria-label="${escapeHTML(product.name)} image gallery">
+      <div class="media-track" id="${galleryId}" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Photos of ${escapeHTML(product.name)}">
+      ${photos.map((photo,i)=>`<div class="media-slide" role="group" aria-roledescription="slide" aria-label="Image ${i+1} of ${photos.length}">
+        <img src="${escapeHTML(photo.url)}" alt="${escapeHTML(photo.alt)}" loading="${i===0?'eager':'lazy'}" decoding="async" draggable="false">
+        ${photo.page ? `<a class="media-credit" href="${escapeHTML(photo.page)}" target="_blank" rel="noopener noreferrer" aria-label="Photo credit and license details">${escapeHTML(photo.author)} · ${escapeHTML(photo.license)} ↗</a>` : ''}
+      </div>`).join('')}
       </div>
-      \${photos.length>1 ? \`<button type="button" class="media-arrow media-prev" data-direction="-1" aria-controls="\${galleryId}" aria-label="Previous photo">‹</button><button type="button" class="media-arrow media-next" data-direction="1" aria-controls="\${galleryId}" aria-label="Next photo">›</button>
-      <div class="media-counter" aria-live="polite">1 / \${photos.length}</div>
-      <div class="media-dots" role="group" aria-label="Choose product photo">\${photos.map((photo,i)=>\`<button type="button" class="media-dot" aria-label="Show image \${i+1}" data-slide="\${i}" aria-current="\${i===0?'true':'false'}"></button>\`).join('')}</div>\` : ''}
-    </div>\`;
+      ${photos.length>1 ? `<button type="button" class="media-arrow media-prev" data-direction="-1" aria-controls="${galleryId}" aria-label="Previous photo">‹</button><button type="button" class="media-arrow media-next" data-direction="1" aria-controls="${galleryId}" aria-label="Next photo">›</button>
+      <div class="media-counter" aria-live="polite">1 / ${photos.length}</div>
+      <div class="media-dots" role="group" aria-label="Choose product photo">${photos.map((photo,i)=>`<button type="button" class="media-dot" aria-label="Show image ${i+1}" data-slide="${i}" aria-current="${i===0?'true':'false'}"></button>`).join('')}</div>` : ''}
+    </div>`;
   };
   const syncCarousel = (gallery, target, smooth=true) => {
     const track=gallery.querySelector('.media-track');
