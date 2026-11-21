@@ -1,23 +1,44 @@
 # Best Gaming Gadgets
 
-A static buying-guide site launching with a comparison of Amazon US mini gaming PC configurations. Product cards, the main comparison, and the buying guide are readable without JavaScript. Browser JavaScript adds graphics filters, adjustable comparison columns, and the mobile navigation toggle.
+A mobile-first gaming affiliate buying guide built around one promise: **only three picks per category** (Best Overall, Best Value, Budget Pick). Cyberpunk neon design, Tailwind utility classes, and accessible comparisons.
 
-## Run locally
+## Quick start
 
-Serve the `dist/` directory with any static server. No dependencies or build step are required.
+Serve `dist/` as the web root:
 
 ```sh
 python3 -m http.server 8000 --directory dist
 ```
 
-Open http://localhost:8000.
+Browse to http://localhost:8000. No JavaScript build step is required for the current static deployment. The Tailwind browser CDN is loaded at runtime for layout utilities; **before production launch, replace it with a compiled Tailwind CSS asset** for performance and production support. The custom cyberpunk styling lives in `dist/styles.css`.
 
-## Amazon Associates
+## Content
 
-The site opens exact Amazon.com product listings. In [dist/amazon-config.js](dist/amazon-config.js), set `window.amazonAssociatesTag` to the approved US tracking ID ending in `-20`. The site adds the tag to its Amazon links and displays the Amazon Associates disclosure when a valid-format ID is configured. A blank value leaves the links untagged. Register the production domain with the Amazon Associates account before enabling referral links.
+- `dist/catalog.js`: 19 category shortlists with 3 options each. Treat these as *initial editorial candidates*, not independently tested products or a guarantee of current Amazon stock. Validate specs and current US availability before launch.
+- `dist/site.js`: category routing via `?category=`, product card rendering, safety-conscious Amazon link construction and accessible comparison.
+- `dist/index.html`: landing-page structure, Tailwind utilities and disclosures.
+- `dist/amazon-config.js`: enter only an approved Amazon.com Associates tracking ID ending `-20`.
 
-The site directs shoppers to Amazon for pricing and availability. When changing a configuration, update both its card and table column in [dist/index.html](dist/index.html) and confirm that the Amazon product identifier still points to the matching variant. Use a manufacturer-provided or otherwise licensed product image. The hero image is an illustration.
+Category content is escaped before insertion into the page. The US store is hard-coded for this iteration; a regional marketplace adapter can replace it later.
 
-## Hosting
+## IMPORTANT: Amazon stock and affiliate compliance
 
-Serve `dist/` as the web root. The repository also contains a Sites hosting manifest for the private preview.
+**No direct-link or Amazon search URL proves an item is in stock.** Mini-PC entries use pre-existing ASIN links from the repository and need manual verification. All other shortlisted products use Amazon.com **search URLs** to avoid fabricating ASINs or directing users to a wrong variant. Search results may include unavailable items or other sellers. Never label an item "available now" based on these links.
+
+A truthful "in stock" guarantee requires a supported and authorized Amazon catalog integration, with inventory freshness rules. For future implementation:
+
+1. Obtain the appropriate US Amazon affiliate catalog API credentials and confirm applicable license and display restrictions.
+2. Fetch product ID, canonical detail URL, variant, eligibility and availability through a **server-side** job. Never expose credentials in browser code.
+3. Cache data with a short, policy-compliant TTL; track `checkedAt` and last validation state; do not interpret API failures as available.
+4. Exclude products without positive fresh inventory/offer status from the public three, and replenish from a broader *reviewed* candidate pool. If fewer than three pass verification, explicitly display fewer than three rather than inventing availability.
+5. Add recurring checks, error logging and alerting, and ensure display follows Amazon's API and Associates terms. Never scrape Amazon as a workaround.
+
+Do not hardcode prices or star ratings that will become stale. Only Amazon.com is targeted; no localized prices, links or guarantees are currently offered.
+
+## QA checklist
+
+- Open desktop and mobile layouts; keyboard-test category buttons.
+- Choose several categories: every one must render exactly three cards and matching comparison columns.
+- Confirm all Amazon links use `amazon.com`, have `rel="sponsored noopener noreferrer"`, and optionally include the approved US Associates tag.
+- Check all products and trade-offs editorially and independently. No fabricated inventory or prices.
+- Replace the Tailwind browser CDN with a compiled, pinned asset ahead of production.
