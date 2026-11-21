@@ -23,7 +23,13 @@
   };
   const renderMedia = (product, category) => {
     const photos=(images[category.id+'/'+product.name]?.photos||[]).filter(photo=>safeImage(photo.url)).slice(0,3);
-    if(!photos.length) return `<div class="product-graphic" role="img" aria-label="Image awaiting verification for ${escapeHTML(product.name)}"><span>${escapeHTML(category.icon)}</span><div class="graphic-ring"></div></div>`;
+    if(!photos.length) {
+      // Reuse the three exact-product images already bundled with the original mini-PC guide.
+      const existing={'MINISFORUM Neptune HX100G':'assets/hx100g.webp','Beelink SER8':'assets/ser8.webp','FIREBAT MN56':'assets/mn56.webp'};
+      const asset=category.id==='mini-pcs'?existing[product.name]:null;
+      if(asset) return `<div class="product-gallery"><figure class="gallery-item gallery-main"><img src="${escapeHTML(asset)}" alt="${escapeHTML(product.name)}" loading="lazy" decoding="async"></figure></div>`;
+      return `<div class="product-graphic" role="img" aria-label="Image awaiting verification for ${escapeHTML(product.name)}"><span>${escapeHTML(category.icon)}</span><div class="graphic-ring"></div></div>`;
+    }
     const primary=photos[0];
     const items=photos.map((photo,i)=>`<figure class="gallery-item ${i===0?'gallery-main':''}"><a href="${escapeHTML(photo.page)}" target="_blank" rel="noopener noreferrer" aria-label="View image license and attribution for ${escapeHTML(product.name)}"><img src="${escapeHTML(photo.url)}" alt="${escapeHTML(product.name)} product photo ${i+1}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.closest('figure').hidden=true"><span class="gallery-credit">${escapeHTML(photo.source)} · ${escapeHTML(photo.license)}</span></a></figure>`).join('');
     return `<div class="product-gallery" aria-label="Photographs of ${escapeHTML(product.name)}">${items}</div><p class="gallery-attribution">Photo attribution: ${photos.map(p=>`<a href="${escapeHTML(p.page)}" target="_blank" rel="noopener noreferrer">${escapeHTML(p.author)} (${escapeHTML(p.license)})</a>`).join(' · ')}</p>`;
