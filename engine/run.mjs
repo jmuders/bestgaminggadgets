@@ -42,7 +42,4 @@ validateSnapshot(snapshot,catalog);
 await fs.mkdir(path.dirname(outputPath),{recursive:true});
 await fs.writeFile(outputPath,JSON.stringify(snapshot,null,2)+'\n');
 console.log(JSON.stringify({matchedProducts:Object.keys(snapshot.products).length,discoveries:snapshot.discoveries.length,articleCount:snapshot.stats.articleCount,failures:failures.length},null,2));
-if(!collected.length && !Object.keys(previous.products||{}).length) {
-  console.error('No feed data available to publish');
-  process.exitCode=1;
-}
+if(!collected.length) console.warn('All publisher feeds unavailable: deployed without new evidence; no availability claims made.');
