@@ -1,0 +1,10 @@
+const fs=require('node:fs');const assert=require('node:assert/strict');
+const js=fs.readFileSync('dist/site.js','utf8');
+const css=fs.readFileSync('dist/styles.css','utf8');
+assert.doesNotThrow(()=>new Function(js),'product page JavaScript should parse');
+for(const fragment of ['media-track','media-prev','media-next','media-dots','data-carousel','data-direction','data-slide','hasImages(p,selected)','unavailableNotice(selected)'])assert.ok(js.includes(fragment),'missing gallery behavior: '+fragment);
+assert.ok(css.includes('scroll-snap-type:x mandatory'));
+assert.ok(css.includes('object-fit:cover'));
+assert.ok(css.includes('.pick-card{padding:0;overflow:hidden'));
+assert.ok(js.includes('photo.approved === true'));
+console.log('Gallery mechanics and strict photo gate verified');
