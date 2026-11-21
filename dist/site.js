@@ -16,6 +16,24 @@
     return url.toString();
   };
   let selected = catalog.find(c => c.id === params.get('category')) || catalog[0];
+  let images = {};
+  const safeImage = value => {
+    try { const u=new URL(value);return u.protocol==='https:' && u.hostname==='upload.wikimedia.org' ? u.href : null; }
+    catch { return null; }
+  };
+  const renderMedia = (product, category) => {
+    const photos=(images[category.id+'/'+product.name]?.photos||[]).filter(photo=>safeImage(photo.url)).slice(0,3);
+    if(!photos.length) {
+      // Reuse the three exact-product images already bundled with the original mini-PC guide.
+      const existing={'MINISFORUM Neptune HX100G':'assets/hx100g.webp','Beelink SER8':'assets/ser8.webp','FIREBAT MN56':'assets/mn56.webp'};
+      const asset=category.id==='mini-pcs'?existing[product.name]:null;
+      if(asset) return `<div class="product-gallery"><figure class="gallery-item gallery-main"><img src="${escapeHTML(asset)}" alt="${escapeHTML(product.name)}" loading="lazy" decoding="async"></figure></div>`;
+      return `<div class="product-graphic" role="img" aria-label="Image awaiting verification for ${escapeHTML(product.name)}"><span>${escapeHTML(category.icon)}</span><div class="graphic-ring"></div></div>`;
+    }
+    const primary=photos[0];
+    const items=photos.map((photo,i)=>`<figure class="gallery-item ${i===0?'gallery-main':''}"><a href="${escapeHTML(photo.page)}" target="_blank" rel="noopener noreferrer" aria-label="View image license and attribution for ${escapeHTML(product.name)}"><img src="${escapeHTML(photo.url)}" alt="${escapeHTML(product.name)} product photo ${i+1}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.closest('figure').hidden=true"><span class="gallery-credit">${escapeHTML(photo.source)} · ${escapeHTML(photo.license)}</span></a></figure>`).join('');
+    return `<div class="product-gallery" aria-label="Photographs of ${escapeHTML(product.name)}">${items}</div><p class="gallery-attribution">Photo attribution: ${photos.map(p=>`<a href="${escapeHTML(p.page)}" target="_blank" rel="noopener noreferrer">${escapeHTML(p.author)} (${escapeHTML(p.license)})</a>`).join(' · ')}</p>`;
+  };
   const renderCategories = () => {
     categoryGrid.innerHTML = catalog.map(c => `<button type="button" class="category-tile text-left ${c.id === selected.id ? 'active' : ''}" data-category="${escapeHTML(c.id)}" aria-pressed="${c.id === selected.id}"><span class="category-glyph" aria-hidden="true">${escapeHTML(c.icon)}</span><span class="flex-1"><strong class="block text-sm sm:text-base">${escapeHTML(c.name)}</strong><small class="block text-slate-400 mt-1">3 curated picks</small></span><span class="text-cyan">↗</span></button>`).join('');
     document.getElementById('category-count').textContent = `${catalog.length} CATEGORIES · ${catalog.length * 3} PICKS`;
@@ -25,7 +43,7 @@
     document.getElementById('selected-description').textContent = selected.description;
     productGrid.innerHTML = selected.products.map((p, i) => `<article class="pick-card ${i === 0 ? 'pick-featured' : ''}">
       <div class="flex items-center justify-between gap-3"><span class="pick-label">${escapeHTML(p.label)}</span><span class="text-slate-500 text-sm font-bold">0${i+1} / 03</span></div>
-      <div class="product-graphic" aria-hidden="true"><span>${escapeHTML(selected.icon)}</span><div class="graphic-ring"></div></div>
+      ${renderMedia(p, selected)}
       <div class="px-1 pb-1 flex flex-col grow">
         <h3 class="font-display text-2xl font-bold leading-tight">${escapeHTML(p.name)}</h3>
         <p class="text-slate-400 text-sm mt-3">${escapeHTML(p.reason)}</p>
@@ -60,4 +78,7 @@
   });
   renderCategories();
   renderProducts();
+  fetch('data/images.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(data=>{
+    if(data?.products && typeof data.products==='object'){images=data.products;renderProducts();}
+  }).catch(()=>{});
 })();

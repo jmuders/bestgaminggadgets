@@ -28,6 +28,8 @@ jobs:
         run: npm test
       - name: Aggregate publisher feeds
         run: npm run aggregate
+      - name: Refresh licensed product imagery
+        run: npm run images
       - name: Build production CSS
         run: npm run css
       - name: Set up Pages
