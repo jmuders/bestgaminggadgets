@@ -42,3 +42,24 @@ Do not hardcode prices or star ratings that will become stale. Only Amazon.com i
 - Confirm all Amazon links use `amazon.com`, have `rel="sponsored noopener noreferrer"`, and optionally include the approved US Associates tag.
 - Check all products and trade-offs editorially and independently. No fabricated inventory or prices.
 - Replace the Tailwind browser CDN with a compiled, pinned asset ahead of production.
+
+
+## GitHub Pages and scheduled review engine
+
+The Pages site is designed to publish at **https://jmuders.github.io/bestgaminggadgets/** after PR #1 is merged and the repository has GitHub Pages set to **Settings → Pages → Build and deployment → Source: GitHub Actions**. This repository-setting step is required; merely adding the workflow does not enable the site.
+
+The workflow `.github/workflows/pages.yml` runs on pushes to `main`, twice daily (07:17 and 19:17 UTC), and on manual workflow dispatch. It validates the shortlists, fetches publisher RSS feeds, writes `dist/data/insights.json`, builds production Tailwind CSS, and deploys the `dist/` folder. Third-party feed failures are logged and do not produce false review or availability claims.
+
+`engine/sources.json` contains publisher feed candidates; their URLs, terms, and uptime need validation. This first engine stage gathers attributed headlines and direct source links, performs conservative model matching, produces source-coverage metrics and a discovery feed. **It does not currently auto-replace the three editorial picks or compute consensus review scores.** It also does not collect Amazon customer reviews or availability. Those capabilities need permissioned feeds or licensed API access, quality controls, verified ASIN matching and a scoring policy before automated publication.
+
+For local development:
+
+```sh
+npm install
+npm test
+npm run aggregate
+npm run css
+python3 -m http.server 8000 --directory dist
+```
+
+Never include Amazon credentials in this public repository or in browser scripts. Use GitHub Actions secrets for permitted API access.
