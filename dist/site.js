@@ -146,12 +146,12 @@
     }
     const rows = [
       ['Best for', selected.products.map(p => p.reason)],
-      ['Key differentiator', visibleProducts.map(p => p.spec)],
-      ['Trade-off', visibleProducts.map(p => p.tradeoff)],
-      ['Amazon US', visibleProducts.map(p => `<a class="text-cyan underline underline-offset-4" href="${escapeHTML(amazonURL(p))}" target="_blank" rel="sponsored noopener noreferrer">Check listing ↗</a>`), true]
+      ['Key differentiator', selected.products.map(p => p.spec)],
+      ['Trade-off', selected.products.map(p => p.tradeoff)],
+      ['Amazon US', selected.products.map(p => `<a class="text-cyan underline underline-offset-4" href="${escapeHTML(amazonURL(p))}" target="_blank" rel="sponsored noopener noreferrer">Check listing ↗</a>`), true]
     ];
-    document.getElementById('comparison-head').innerHTML = `<tr><th scope="col">COMPARE</th>${visibleProducts.map(p=>`<th scope="col">${escapeHTML(p.label)}<span class="block text-white text-base mt-1">${escapeHTML(p.name)}</span></th>`).join('')}</tr>`;
-    document.getElementById('comparison-body').innerHTML = visibleProducts.length ? rows.map(([label,values,raw])=>`<tr><th scope="row">${escapeHTML(label)}</th>${values.map(value=>`<td>${raw?value:escapeHTML(value)}</td>`).join('')}</tr>`).join('');
+    document.getElementById('comparison-head').innerHTML = `<tr><th scope="col">COMPARE</th>${selected.products.map(p=>`<th scope="col">${escapeHTML(p.label)}<span class="block text-white text-base mt-1">${escapeHTML(p.name)}</span></th>`).join('')}</tr>`;
+    document.getElementById('comparison-body').innerHTML = rows.map(([label,values,raw])=>`<tr><th scope="row">${escapeHTML(label)}</th>${values.map(value=>`<td>${raw?value:escapeHTML(value)}</td>`).join('')}</tr>`).join('');
   };
   categoryGrid.addEventListener('click', e => {
     const button = e.target.closest('[data-category]');
