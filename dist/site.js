@@ -139,13 +139,9 @@
         <p class="text-xs mt-3 text-slate-500">See live price & availability on Amazon</p>
       </div></article>`).join('') + (photoReady(selected)<3 ? unavailableNotice(selected) : '');
     productGrid.querySelectorAll("[data-carousel]").forEach(g=>syncCarousel(g,0,false));
-    if(photoReady(selected)<3) {
-      document.getElementById('comparison-head').innerHTML='';
-      document.getElementById('comparison-body').innerHTML='<tr><td>Comparison will appear when all three products have verified photography.</td></tr>';
-      return;
-    }
+    const visibleProducts = selected.products.filter(p=>hasImages(p,selected));
     const rows = [
-      ['Best for', selected.products.map(p => p.reason)],
+      ['Best for', visibleProducts.map(p => p.reason)],
       ['Key differentiator', selected.products.map(p => p.spec)],
       ['Trade-off', selected.products.map(p => p.tradeoff)],
       ['Amazon US', selected.products.map(p => `<a class="text-cyan underline underline-offset-4" href="${escapeHTML(amazonURL(p))}" target="_blank" rel="sponsored noopener noreferrer">Check listing ↗</a>`), true]
