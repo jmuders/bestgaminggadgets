@@ -1,0 +1,9 @@
+{
+  "sources": [
+    {"id":"techpowerup-reviews","name":"TechPowerUp","type":"review","url":"https://www.techpowerup.com/rss/reviews"},
+    {"id":"techpowerup-news","name":"TechPowerUp News","type":"news","url":"https://www.techpowerup.com/rss/news"},
+    {"id":"pcgamer-reviews","name":"PC Gamer","type":"review","url":"https://www.pcgamer.com/feeds/articletype/review/"},
+    {"id":"pcgamer-hardware","name":"PC Gamer Hardware","type":"news","url":"https://www.pcgamer.com/feeds.xml"},
+    {"id":"verge-games","name":"The Verge","type":"news","url":"https://www.theverge.com/rss/games/index.xml"}
+  ]
+}

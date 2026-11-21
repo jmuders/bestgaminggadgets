@@ -1,0 +1,1 @@
+{"name":"bestgaminggadgets-engine","private":true,"type":"module","engines":{"node":">=22"},"scripts":{"aggregate":"node engine/run.mjs","test":"node --test engine/tests.mjs && node scripts/check-catalog.cjs","css":"tailwindcss -i engine/tailwind.css -o dist/tailwind.css --minify"},"dependencies":{"fast-xml-parser":"5.2.5"},"devDependencies":{"tailwindcss":"3.4.17"}}
