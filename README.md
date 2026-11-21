@@ -63,3 +63,12 @@ python3 -m http.server 8000 --directory dist
 ```
 
 Never include Amazon credentials in this public repository or in browser scripts. Use GitHub Actions secrets for permitted API access.
+
+
+## Product image enrichment (scheduled)
+
+`npm run images` now runs in the same GitHub Pages Actions pipeline as review ingestion. It queries Wikimedia Commons for up to 3 product-specific images per gadget, rejects unlicensed or ambiguous model matches, and exports `dist/data/images.json`. The frontend uses a compact responsive gallery with source/creator/license links; images are shown beside the *matching* gadget in its comparison card. Existing local mini-PC product photography is retained as a fallback.
+
+Only explicitly recognized public-domain or Creative Commons BY/BY-SA/CC0 images of sufficient resolution are automatically accepted. This is **not** a generic web-image scraper: Amazon images and review-site photographs are excluded. If no reliable reusable photo can be found, the product card shows a deliberate placeholder instead of a wrong product. Attribution and all applicable license requirements must be respected, and a human should periodically audit matches and licensing. Some products will therefore have fewer than three images until an authorized manufacturer's media feed or licensed catalog provider is added.
+
+For production-grade coverage, add a manufacturer media asset adapter with written reuse permission and an authorized Amazon catalog-media integration if permitted by the Associates/API terms. Product photos and product listing data should be refreshed together when those integrations become available. Images are retrieved only via HTTPS from Wikimedia and are not downloaded/re-hosted without further rights checks.
