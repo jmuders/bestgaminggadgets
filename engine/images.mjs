@@ -39,8 +39,11 @@ function extractPhoto(page,productName) {
     source:'Wikimedia Commons',
     width:Number(info?.thumbwidth||0),
     height:Number(info?.thumbheight||0),
+    approved:false,
   };
-  return validatePhoto(photo,productName)?photo:null;
+  if(!validatePhoto(photo,productName)) return null;
+  // Policy checks qualify an image for an automatic source-match, not a human review.
+  return {...photo,approved:true};
 }
 async function searchPhotos(productName,fetcher=fetch) {
   const params=new URLSearchParams({
@@ -67,7 +70,7 @@ export async function refreshImages({catalog,fetcher=fetch,previous={},now=new D
   for(const category of catalog)for(const product of category.products){
     const key=category.id+'/'+product.name;
     const old=previous.products?.[key];
-    const cached=(old?.photos||[]).filter(p=>validatePhoto(p,product.name)).slice(0,IMAGE_LIMIT);
+    const cached=(old?.photos||[]).filter(p=>p.approved===true&&validatePhoto(p,product.name)).slice(0,IMAGE_LIMIT);
     const age=Date.parse(now)-Date.parse(old?.checkedAt||'');
     if(cached.length && Number.isFinite(age)&&age>=0&&age<7*86400000){
       products[key]={photos:cached,checkedAt:old.checkedAt};stats.reused++;stats.found+=cached.length;continue;
