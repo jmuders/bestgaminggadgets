@@ -112,14 +112,20 @@
       if(counter)counter.textContent=(index+1)+' / '+track.children.length;
     }
   },true);
+  const hasImages = (product, category) => verifiedPhotos(product, category).length > 0;
+  const photoReady = category => category.products.filter(product=>hasImages(product,category)).length;
+  const unavailableNotice = category => `<div class="gallery-unavailable md:col-span-3" role="status">
+    <h3 class="font-display text-xl font-bold text-white">Product photography under verification</h3>
+    <p class="mt-2">We currently have ${photoReady(category)} of 3 exact-model photo sets for ${escapeHTML(category.name)}. Products without verified images are withheld rather than shown with unrelated photographs. More images will appear after approved source assets are connected.</p>
+  </div>`;
   const renderCategories = () => {
-    categoryGrid.innerHTML = catalog.map(c => `<button type="button" class="category-tile text-left ${c.id === selected.id ? 'active' : ''}" data-category="${escapeHTML(c.id)}" aria-pressed="${c.id === selected.id}"><span class="category-glyph" aria-hidden="true">${escapeHTML(c.icon)}</span><span class="flex-1"><strong class="block text-sm sm:text-base">${escapeHTML(c.name)}</strong><small class="block text-slate-400 mt-1">3 curated picks</small></span><span class="text-cyan">↗</span></button>`).join('');
+    categoryGrid.innerHTML = catalog.map(c => `<button type="button" class="category-tile text-left ${c.id === selected.id ? 'active' : ''}" data-category="${escapeHTML(c.id)}" aria-pressed="${c.id === selected.id}"><span class="category-glyph" aria-hidden="true">${escapeHTML(c.icon)}</span><span class="flex-1"><strong class="block text-sm sm:text-base">${escapeHTML(c.name)}</strong><small class="block text-slate-400 mt-1">${photoReady(c)===3 ? "3 illustrated picks" : "Photo verification pending"}</small></span><span class="text-cyan">↗</span></button>`).join('');
     document.getElementById('category-count').textContent = `${catalog.length} CATEGORIES · ${catalog.length * 3} PICKS`;
   };
   const renderProducts = () => {
     document.getElementById('selected-title').innerHTML = `Top 3 <span class="text-cyan">${escapeHTML(selected.name)}</span>`;
     document.getElementById('selected-description').textContent = selected.description;
-    productGrid.innerHTML = selected.products.map((p, i) => `<article class="pick-card ${i === 0 ? 'pick-featured' : ''}">
+    productGrid.innerHTML = selected.products.map((p, i) => !hasImages(p,selected) ? "" : `<article class="pick-card ${i === 0 ? 'pick-featured' : ''}">
       <div class="pick-card-heading flex items-center justify-between gap-3"><span class="pick-label">${escapeHTML(p.label)}</span><span class="text-slate-500 text-sm font-bold">0${i+1} / 03</span></div>
       ${renderMedia(p, selected, i)}
       <div class="pick-card-body flex flex-col grow">
@@ -131,8 +137,13 @@
         </div>
         <a class="amazon-cta mt-7" href="${escapeHTML(amazonURL(p))}" target="_blank" rel="sponsored noopener noreferrer" aria-label="Find ${escapeHTML(p.name)} on Amazon.com in a new tab">CHECK ON AMAZON.COM ↗</a>
         <p class="text-xs mt-3 text-slate-500">See live price & availability on Amazon</p>
-      </div></article>`).join('');
+      </div></article>`).join('') + (photoReady(selected)<3 ? unavailableNotice(selected) : '');
     productGrid.querySelectorAll("[data-carousel]").forEach(g=>syncCarousel(g,0,false));
+    if(photoReady(selected)<3) {
+      document.getElementById('comparison-head').innerHTML='';
+      document.getElementById('comparison-body').innerHTML='<tr><td>Comparison will appear when all three products have verified photography.</td></tr>';
+      return;
+    }
     const rows = [
       ['Best for', selected.products.map(p => p.reason)],
       ['Key differentiator', selected.products.map(p => p.spec)],
