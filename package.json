@@ -7,7 +7,7 @@
   },
   "scripts": {
     "aggregate": "node engine/run.mjs",
-    "test": "node --test engine/tests.mjs engine/image-tests.mjs && node scripts/check-catalog.cjs",
+    "test": "node --test engine/tests.mjs engine/image-tests.mjs && node scripts/check-catalog.cjs && node scripts/check-galleries.cjs",
     "css": "tailwindcss -i engine/tailwind.css -o dist/tailwind.css --minify",
     "images": "node engine/images.mjs"
   },
