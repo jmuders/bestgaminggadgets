@@ -1,0 +1,1 @@
+{"name":"bestgaminggadgets-engine","private":true,"type":"module","engines":{"node":">=22"},"scripts":{"aggregate":"node engine/run.mjs","test":"node --test engine/tests.mjs && node scripts/check-catalog.cjs"},"dependencies":{"fast-xml-parser":"5.2.5"}}
